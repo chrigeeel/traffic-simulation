@@ -28,7 +28,7 @@ class View:
             handle_set_generator_avg_speed,
             handle_set_generator_delay,
         ):
-        # Configure the root window
+        # configure the root window
         root.minsize(SIMULATION_SIZE, SIMULATION_SIZE + 170)
         self.root = root
         self.cell_size = int(SIMULATION_SIZE / size)
@@ -37,11 +37,11 @@ class View:
         self.width = SIMULATION_SIZE
         self.height = SIMULATION_SIZE
 
-        # Create the canvas for drawing
+        # create the canvas for drawing
         self.raster = Canvas(self.root, width=self.width, height=self.height)
         self.raster.grid(row=0, column=0, columnspan=3)
 
-        # Set up handler functions for various events
+        # set up handler functions for various events
         self.handle_start = handle_start
         self.handle_tick = handle_tick
         self.handle_stop = handle_stop
@@ -49,7 +49,7 @@ class View:
         self.handle_set_generator_avg_speed = handle_set_generator_avg_speed
         self.handle_set_generator_delay = handle_set_generator_delay
 
-        # Create and set up the "Execute Tick" button
+        # create and set up the "Execute Tick" button
         self.b_tick = Button(
             self.root,
             text="Execute Tick",
@@ -57,7 +57,7 @@ class View:
         )
         self.b_tick.grid(row=1, column=0)
 
-        # Create and set up the "Start Simulation" button
+        # create and set up the "Start Simulation" button
         self.b_start = Button(
             self.root,
             text="Start Simulation",
@@ -65,7 +65,7 @@ class View:
         )
         self.b_start.grid(row=1, column=1)
 
-        # Create and set up the "Stop Simulation" button
+        # create and set up the "Stop Simulation" button
         self.b_stop = Button(
             self.root,
             text="Stop Simulation",
@@ -73,7 +73,7 @@ class View:
         )
         self.b_stop.grid(row=1, column=2)
 
-        # Create and set up the label and slider for the number of vertical roads
+        # create and set up the label and slider for the number of vertical roads
         self.l_num_vertical_roads = Label(
             self.root,
             text="# Vertical Roads"
@@ -92,7 +92,7 @@ class View:
         )
         self.s_num_vertical_roads.grid(row=3, column=0)
 
-        # Create and set up the label and slider for the number of horizontal roads
+        # create and set up the label and slider for the number of horizontal roads
         self.l_num_horizontal_roads = Label(
             self.root,
             text="# Horizontal Roads"
@@ -111,7 +111,7 @@ class View:
         )
         self.s_num_horizontal_roads.grid(row=3, column=1)
 
-        # Create and set up the label and slider for the average car speed
+        # create and set up the label and slider for the average car speed
         self.l_generator_avg_speed = Label(
             self.root,
             text="Average Car Speed"
@@ -130,7 +130,7 @@ class View:
         )
         self.s_generator_avg_speed.grid(row=5, column=0)
 
-        # Create and set up the label and slider for the car generator delay
+        # create and set up the label and slider for the car generator delay
         self.l_generator_delay = Label(
             self.root,
             text="Car Generator Delay"

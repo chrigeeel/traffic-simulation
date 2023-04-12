@@ -13,7 +13,7 @@ class Controller:
         self.root = root
         self.size = size
 
-        # Initialize the view and model
+        # initialize the view and model
         self.view = View(
             self.root,
             size=self.size,
@@ -33,11 +33,11 @@ class Controller:
 
         self.do_tick()
 
-    # Method to handle ticks, which update the model and view
+    # method to handle ticks, which update the model and view
     def handle_tick(self):
         self.do_tick()
 
-    # Method to start the simulation
+    # method to start the simulation
     def handle_start(self):
         if self.is_running:
             print("already running")
@@ -48,7 +48,7 @@ class Controller:
 
         self.tick_loop()
 
-    # Method to stop the simulation
+    # method to stop the simulation
     def handle_stop(self):
         if not self.is_running:
             print("not running")
@@ -57,7 +57,7 @@ class Controller:
         
         self.is_running = False
 
-    # Method to handle the number of roads in the simulation
+    # method to handle the number of roads in the simulation
     def handle_set_num_roads(self, num_roads, direction):
         self.model.clear_roads(direction)
         for _ in range(num_roads):
@@ -79,18 +79,18 @@ class Controller:
 
         self.do_tick()
 
-    # Method to handle the average speed of car generators
+    # method to handle the average speed of car generators
     def handle_set_generator_avg_speed(self, avg_speed):
         min_speed = int(avg_speed - (avg_speed / 4))
         max_speed = int(avg_speed + (avg_speed / 4))
 
         self.model.update_generators_speed(min_speed, max_speed)
 
-    # Method to handle the delay of car generators
+    # method to handle the delay of car generators
     def handle_set_generator_delay(self, delay):
         self.model.update_generators_delay(delay)
 
-    # Main loop for ticks when the simulation is running
+    # main loop for ticks when the simulation is running
     def tick_loop(self):
         # check if should still be running
         if not self.is_running:
@@ -99,11 +99,11 @@ class Controller:
         self.do_tick()
         self.root.after(TICK_DELAY, self.tick_loop)
 
-    # Method to perform a single tick, updating the model and view
+    # nethod to perform a single tick, updating the model and view
     def do_tick(self):
         self.model.do_tick()
         self.view.draw_grid(self.model.grid, self.model.border_grid)
 
-    # Start the main loop of the tkinter application
+    # start the main loop of the tkinter application
     def mainloop(self):
         self.root.mainloop()

@@ -179,7 +179,6 @@ class CarGenerator:
 
         return car
 
-
 class LightSignal:
     def __init__(self, position, red_duration=50, green_duration=30, red_delay=5, state=0):
         if red_duration <= green_duration:
@@ -305,6 +304,7 @@ class Model:
             self.render_road(road) # render road to the grid
 
     def update_generators_speed(self, min_speed, max_speed):
+        # re-initiate generator in all roads with new min/max speeds
         for road in self.roads:
             road.generator = CarGenerator(
                 position=0,
@@ -314,6 +314,7 @@ class Model:
             )
 
     def update_generators_delay(self, delay):
+        # re-initiate generator in all roads with new delay
         for road in self.roads:
             road.generator = CarGenerator(
                 position=road.generator.position,
@@ -343,7 +344,7 @@ class Model:
 
     def empty_grid(self, size):
         # create an empty grid
-        grid = [0] * size
+        grid = [0] * size # 0 = white
         for x in range(size):
             grid[x] = [0] * size
 
@@ -351,7 +352,7 @@ class Model:
     
     def empty_border_grid(self, size):
         # create an empty border grid
-        grid = [5] * size
+        grid = [5] * size # 5 = lightgrey
         for x in range(size):
             grid[x] = [5] * size
 
