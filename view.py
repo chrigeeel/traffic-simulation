@@ -5,10 +5,9 @@ COLOR_MAP = {
     0: "white", # empty cell
     1: "black", # road
     2: "blue", # car
-    3: "red",
-    4: "green",
-    9: "yellow", # car generator
-    11: "lightgrey", # border
+    3: "red", # light signal
+    4: "green", # light signal
+    5: "lightgrey", # border
 }
 
 SIMULATION_SIZE = 500
@@ -21,13 +20,14 @@ class View:
             handle_tick,
             handle_start, 
             handle_stop, 
-            handle_set_num_roads
+            handle_set_num_roads,
+            handle_set_generator_avg_speed,
+            handle_set_generator_delay,
         ):
-        self.cell_size = int(SIMULATION_SIZE / size)
-
-        print(self.cell_size)
-
+        root.minsize(500, 670)
         self.root = root
+        self.cell_size = int(SIMULATION_SIZE / size)
+        root.title("Christian Traffic Simulation")
 
         self.width = SIMULATION_SIZE
         self.height = SIMULATION_SIZE
@@ -40,29 +40,37 @@ class View:
         self.handle_tick = handle_tick
         self.handle_stop = handle_stop
         self.handle_set_num_roads = handle_set_num_roads
+        self.handle_set_generator_avg_speed = handle_set_generator_avg_speed
+        self.handle_set_generator_delay = handle_set_generator_delay
 
         self.b_tick = Button(
             self.root,
-            text="Tick",
+            text="Execute Tick",
             command=handle_tick
         )
         self.b_tick.grid(row=1, column=0)
         
         self.b_start = Button(
             self.root,
-            text="Start",
+            text="Start Simulation",
             command=self.handle_start,
         )
         self.b_start.grid(row=1, column=1)
 
         self.b_stop = Button(
             self.root,
-            text="Stop",
+            text="Stop Simulation",
             command=self.handle_stop,
         )
         self.b_stop.grid(row=1, column=2)
 
+        self.l_num_vertical_roads = Label(
+            self.root,
+            text="# Vertical Roads"
+        )
+        self.l_num_vertical_roads.grid(row=2, column=0)
         self.num_vertical_roads = IntVar()
+        self.num_vertical_roads.set(1)
         self.s_num_vertical_roads = Scale(
             self.root,
             from_=0,
@@ -72,9 +80,15 @@ class View:
             variable=self.num_vertical_roads,
             command=lambda _ : self.handle_set_num_roads(self.num_vertical_roads.get(), "vertical")
         )
-        self.s_num_vertical_roads.grid(row=2, column=0)
+        self.s_num_vertical_roads.grid(row=3, column=0)
 
+        self.l_num_horizontal_roads = Label(
+            self.root,
+            text="# Horizontal Roads"
+        )
+        self.l_num_horizontal_roads.grid(row=2, column=1)
         self.num_horizontal_roads = IntVar()
+        self.num_horizontal_roads.set(1)
         self.s_num_horizontal_roads = Scale(
             self.root,
             from_=0,
@@ -84,7 +98,45 @@ class View:
             variable=self.num_horizontal_roads,
             command=lambda _ : self.handle_set_num_roads(self.num_horizontal_roads.get(), "horizontal")
         )
-        self.s_num_horizontal_roads.grid(row=2, column=1)
+        self.s_num_horizontal_roads.grid(row=3, column=1)
+
+
+        self.l_generator_avg_speed = Label(
+            self.root,
+            text="Average Car Speed"
+        )
+        self.l_generator_avg_speed.grid(row=4, column=0)
+        self.generator_avg_speed = IntVar()
+        self.generator_avg_speed.set(100)
+        self.s_generator_avg_speed = Scale(
+            self.root,
+            from_=50,
+            to=200,
+            relief=GROOVE,
+            orient=HORIZONTAL,
+            variable=self.generator_avg_speed,
+            command=lambda _ : self.handle_set_generator_avg_speed(self.generator_avg_speed.get())
+        )
+        self.s_generator_avg_speed.grid(row=5, column=0)
+
+
+        self.l_generator_delay = Label(
+            self.root,
+            text="Car Generator Delay"
+        )
+        self.l_generator_delay.grid(row=4, column=1)
+        self.generator_delay = IntVar()
+        self.generator_delay.set(10)
+        self.s_generator_delay = Scale(
+            self.root,
+            from_=3,
+            to=30,
+            relief=GROOVE,
+            orient=HORIZONTAL,
+            variable=self.generator_delay,
+            command=lambda _ : self.handle_set_generator_delay(self.generator_delay.get())
+        )
+        self.s_generator_delay.grid(row=5, column=1)
 
     def draw_frame(self, frame, border_frame):
         self.raster.delete(ALL)
