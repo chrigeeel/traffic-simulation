@@ -144,7 +144,10 @@ class Car:
             # full stop on max break strength
             minus = self.speed
         else:
-            minus = self.speed / (DECELERATION_SLOWER + MAX_DECELERATION_STRENGTH - strength)
+            divisor = DECELERATION_SLOWER + MAX_DECELERATION_STRENGTH - strength
+            if divisor <= 0:
+                divisor = 1
+            minus = self.speed / divisor
 
         self.speed -= minus
         if self.speed < 0:

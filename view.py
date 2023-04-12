@@ -1,17 +1,21 @@
 from tkinter import *
-import time
 
+# color map for rendering
+# need to be tkinter-compatible colors.
 COLOR_MAP = {
-    0: "white", # empty cell
-    1: "black", # road
-    2: "blue", # car
-    3: "red", # light signal
-    4: "green", # light signal
-    5: "lightgrey", # border
+    0: "white",  # empty cell
+    1: "black",  # road
+    2: "blue",  # car
+    3: "red",  # light signal
+    4: "green",  # light signal
+    5: "lightgrey",  # border
 }
 
+# size of the simulation canvas
+# should not be changed
 SIMULATION_SIZE = 500
 
+# View class manages the graphical user interface (GUI)
 class View:
     def __init__(
             self, 
@@ -24,7 +28,8 @@ class View:
             handle_set_generator_avg_speed,
             handle_set_generator_delay,
         ):
-        root.minsize(500, 670)
+        # Configure the root window
+        root.minsize(SIMULATION_SIZE, SIMULATION_SIZE + 170)
         self.root = root
         self.cell_size = int(SIMULATION_SIZE / size)
         root.title("Christian Traffic Simulation")
@@ -32,10 +37,11 @@ class View:
         self.width = SIMULATION_SIZE
         self.height = SIMULATION_SIZE
 
+        # Create the canvas for drawing
         self.raster = Canvas(self.root, width=self.width, height=self.height)
         self.raster.grid(row=0, column=0, columnspan=3)
 
-        # handlers
+        # Set up handler functions for various events
         self.handle_start = handle_start
         self.handle_tick = handle_tick
         self.handle_stop = handle_stop
@@ -43,13 +49,15 @@ class View:
         self.handle_set_generator_avg_speed = handle_set_generator_avg_speed
         self.handle_set_generator_delay = handle_set_generator_delay
 
+        # Create and set up the "Execute Tick" button
         self.b_tick = Button(
             self.root,
             text="Execute Tick",
             command=handle_tick
         )
         self.b_tick.grid(row=1, column=0)
-        
+
+        # Create and set up the "Start Simulation" button
         self.b_start = Button(
             self.root,
             text="Start Simulation",
@@ -57,6 +65,7 @@ class View:
         )
         self.b_start.grid(row=1, column=1)
 
+        # Create and set up the "Stop Simulation" button
         self.b_stop = Button(
             self.root,
             text="Stop Simulation",
@@ -64,6 +73,7 @@ class View:
         )
         self.b_stop.grid(row=1, column=2)
 
+        # Create and set up the label and slider for the number of vertical roads
         self.l_num_vertical_roads = Label(
             self.root,
             text="# Vertical Roads"
@@ -82,6 +92,7 @@ class View:
         )
         self.s_num_vertical_roads.grid(row=3, column=0)
 
+        # Create and set up the label and slider for the number of horizontal roads
         self.l_num_horizontal_roads = Label(
             self.root,
             text="# Horizontal Roads"
@@ -100,7 +111,7 @@ class View:
         )
         self.s_num_horizontal_roads.grid(row=3, column=1)
 
-
+        # Create and set up the label and slider for the average car speed
         self.l_generator_avg_speed = Label(
             self.root,
             text="Average Car Speed"
@@ -119,7 +130,7 @@ class View:
         )
         self.s_generator_avg_speed.grid(row=5, column=0)
 
-
+        # Create and set up the label and slider for the car generator delay
         self.l_generator_delay = Label(
             self.root,
             text="Car Generator Delay"
@@ -138,13 +149,15 @@ class View:
         )
         self.s_generator_delay.grid(row=5, column=1)
 
-    def draw_frame(self, frame, border_frame):
+    # draw a grid on the canvas
+    def draw_grid(self, grid, border_grid):
         self.raster.delete(ALL)
-        for x, row in enumerate(frame):
+        for x, row in enumerate(grid):
             for y, value in enumerate(row):
-                self.draw_cell(x, y, COLOR_MAP[value], COLOR_MAP[border_frame[x][y]])
+                self.draw_cell(x, y, COLOR_MAP[value], COLOR_MAP[border_grid[x][y]])
                                
 
+    # draw a single cell on the canvas
     def draw_cell(self, x, y, color, border):
         self.raster.create_rectangle(
             x*self.cell_size,
