@@ -1,3 +1,10 @@
+"""
+Description: A simulation environment for car traffic with cellular automata
+The program encapsules four files: main.py, controller.py, model.py, view.py
+Author: Christian Tognazza
+Datum: 13.04.2023
+"""
+
 from tkinter import *
 
 from view import *
@@ -8,6 +15,8 @@ from model import *
 TICK_DELAY = 50
 
 # Controller class that handles the interaction between the Model and View
+
+
 class Controller:
     def __init__(self, root, size=50):
         self.root = root
@@ -54,7 +63,7 @@ class Controller:
             print("not running")
             return
             #raise Exception("not running")
-        
+
         self.is_running = False
 
     # method to handle the number of roads in the simulation
@@ -95,7 +104,7 @@ class Controller:
         # check if should still be running
         if not self.is_running:
             return
-        
+
         self.do_tick()
         self.root.after(TICK_DELAY, self.tick_loop)
 

@@ -1,3 +1,10 @@
+"""
+Description: A simulation environment for car traffic with cellular automata
+The program encapsules four files: main.py, controller.py, model.py, view.py
+Author: Christian Tognazza
+Datum: 13.04.2023
+"""
+
 from tkinter import *
 
 # color map for rendering
@@ -16,18 +23,20 @@ COLOR_MAP = {
 SIMULATION_SIZE = 500
 
 # View class manages the graphical user interface (GUI)
+
+
 class View:
     def __init__(
-            self, 
-            root, 
-            size,
-            handle_tick,
-            handle_start, 
-            handle_stop, 
-            handle_set_num_roads,
-            handle_set_generator_avg_speed,
-            handle_set_generator_delay,
-        ):
+        self,
+        root,
+        size,
+        handle_tick,
+        handle_start,
+        handle_stop,
+        handle_set_num_roads,
+        handle_set_generator_avg_speed,
+        handle_set_generator_delay,
+    ):
         # configure the root window
         root.minsize(SIMULATION_SIZE, SIMULATION_SIZE + 170)
         self.root = root
@@ -88,7 +97,8 @@ class View:
             relief=GROOVE,
             orient=HORIZONTAL,
             variable=self.num_vertical_roads,
-            command=lambda _ : self.handle_set_num_roads(self.num_vertical_roads.get(), "vertical")
+            command=lambda _: self.handle_set_num_roads(
+                self.num_vertical_roads.get(), "vertical")
         )
         self.s_num_vertical_roads.grid(row=3, column=0)
 
@@ -107,7 +117,8 @@ class View:
             relief=GROOVE,
             orient=HORIZONTAL,
             variable=self.num_horizontal_roads,
-            command=lambda _ : self.handle_set_num_roads(self.num_horizontal_roads.get(), "horizontal")
+            command=lambda _: self.handle_set_num_roads(
+                self.num_horizontal_roads.get(), "horizontal")
         )
         self.s_num_horizontal_roads.grid(row=3, column=1)
 
@@ -126,7 +137,8 @@ class View:
             relief=GROOVE,
             orient=HORIZONTAL,
             variable=self.generator_avg_speed,
-            command=lambda _ : self.handle_set_generator_avg_speed(self.generator_avg_speed.get())
+            command=lambda _: self.handle_set_generator_avg_speed(
+                self.generator_avg_speed.get())
         )
         self.s_generator_avg_speed.grid(row=5, column=0)
 
@@ -145,7 +157,8 @@ class View:
             relief=GROOVE,
             orient=HORIZONTAL,
             variable=self.generator_delay,
-            command=lambda _ : self.handle_set_generator_delay(self.generator_delay.get())
+            command=lambda _: self.handle_set_generator_delay(
+                self.generator_delay.get())
         )
         self.s_generator_delay.grid(row=5, column=1)
 
@@ -154,10 +167,11 @@ class View:
         self.raster.delete(ALL)
         for x, row in enumerate(grid):
             for y, value in enumerate(row):
-                self.draw_cell(x, y, COLOR_MAP[value], COLOR_MAP[border_grid[x][y]])
-                               
+                self.draw_cell(
+                    x, y, COLOR_MAP[value], COLOR_MAP[border_grid[x][y]])
 
     # draw a single cell on the canvas
+
     def draw_cell(self, x, y, color, border):
         self.raster.create_rectangle(
             x*self.cell_size,

@@ -1,8 +1,16 @@
+"""
+Description: A simulation environment for car traffic with cellular automata
+The program encapsules four files: main.py, controller.py, model.py, view.py
+Author: Christian Tognazza
+Datum: 13.04.2023
+"""
+
 import random
+
 
 class Road:
     def __init__(self, offset, direction, length, generator):
-        if direction  not in ["horizontal",  "vertical"]:
+        if direction not in ["horizontal",  "vertical"]:
             raise Exception("road direction must be horizontal or vertical")
 
         self.offset = offset
@@ -22,10 +30,12 @@ class Road:
         for i, car in enumerate(self.cars):
             new_list[car.position] = car
             distance_to_next_car = self.find_next_car_distance(i)
-            distance_to_next_light_signal = self.find_next_light_signal_distance(car.position)
+            distance_to_next_light_signal = self.find_next_light_signal_distance(
+                car.position)
 
             # find the closest obstacle (car or light signal)
-            distance_to_next_obstacle = min(distance_to_next_car, distance_to_next_light_signal)
+            distance_to_next_obstacle = min(
+                distance_to_next_car, distance_to_next_light_signal)
 
             # update car state
             car.do_tick(distance_to_next_obstacle)
@@ -59,10 +69,11 @@ class Road:
             return 999
 
         next_car = self.cars[car_index+1]
-        distance_to_next_car = next_car.position - self.cars[car_index].position
+        distance_to_next_car = next_car.position - \
+            self.cars[car_index].position
 
         return distance_to_next_car
-    
+
     def find_next_light_signal_distance(self, car_position):
         # find the distance to the next light signal from the current car position
         distance_to_next_light_signal = 999
@@ -94,6 +105,7 @@ class Road:
         # create an empty list for the road's list
         return [None for _ in range(self.length)]
 
+
 # anything below 4 cells distance between is considered critical and deceleration is needed
 DESIRED_CAR_OBSTACLE_DISTANCE = 4
 # how fast cars are able to accelerate based on their max speed
@@ -104,6 +116,7 @@ ACCELERATION_DIVIDER = 3
 DECELERATION_SLOWER = 3
 # deceleration strength maximum, arbitrary number
 MAX_DECELERATION_STRENGTH = 4
+
 
 class Car:
     def __init__(self, speed, max_speed, position):
@@ -124,11 +137,11 @@ class Car:
             self.accelerate()
 
         # keep track of progress, 0-100
-        # even if not a whole cell is moved, we want to keep track of the distance moved 
+        # even if not a whole cell is moved, we want to keep track of the distance moved
         self.progress += self.speed
         if self.progress < 100:
             return
-        
+
         # self.progress is over 100, add to position and keep rest of progress
         self.position += int(self.progress // 100)
         self.progress = self.progress % 100
@@ -152,6 +165,7 @@ class Car:
         self.speed -= minus
         if self.speed < 0:
             self.speed = 0
+
 
 class CarGenerator:
     def __init__(self, position=0, delay=10, min_speed=75, max_speed=125):
@@ -179,11 +193,12 @@ class CarGenerator:
 
         return car
 
+
 class LightSignal:
     def __init__(self, position, red_duration=50, green_duration=30, red_delay=5, state=0):
         if red_duration <= green_duration:
             raise Exception("red_duration must be greater than green_duration")
-        
+
         self.position = position
         self.red_duration = red_duration
         self.green_duration = green_duration
@@ -201,14 +216,15 @@ class LightSignal:
     def do_tick(self):
         # update the state of the light signal
         if self.state == 1 and self.progress >= self.green_duration:
-                self.state = 0
-                self.progress = 0
-    
+            self.state = 0
+            self.progress = 0
+
         elif self.state == 0 and self.progress >= self.red_duration:
-                self.state = 1
-                self.progress = 0
+            self.state = 1
+            self.progress = 0
 
         self.progress += 1
+
 
 class Model:
     def __init__(self, size):
@@ -223,10 +239,11 @@ class Model:
         for road_iteration in self.roads:
             if road.offset == road_iteration.offset and road.direction == road_iteration.direction:
                 raise Exception("road already exists")
-        
+
         if road.offset >= self.size or road.offset in [0, self.size - 1]:
-            raise Exception("road offset cannot be on the edge or bigger or equal to size")
-        
+            raise Exception(
+                "road offset cannot be on the edge or bigger or equal to size")
+
         self.roads.append(road)
         self.calculate_intersection_light_signals()
 
@@ -234,8 +251,9 @@ class Model:
         # clear all roads in the given direction
         if direction not in ["vertical", "horizontal"]:
             raise Exception("invalid road direction")
-        
-        self.roads = [road for road in self.roads if road.direction != direction]
+
+        self.roads = [
+            road for road in self.roads if road.direction != direction]
         for road in self.roads:
             road.cars = []
 
@@ -247,20 +265,23 @@ class Model:
         for road in self.roads:
             road.light_signals = []
         # isolate vertical and horizontal roads
-        vertical_roads = [road for road in self.roads if road.direction == "vertical"]
-        horizontal_roads = [road for road in self.roads if road.direction == "horizontal"]
+        vertical_roads = [
+            road for road in self.roads if road.direction == "vertical"]
+        horizontal_roads = [
+            road for road in self.roads if road.direction == "horizontal"]
 
         for vertical_road in vertical_roads:
             for horizontal_road in horizontal_roads:
                 # find all intersection points (x, y)
-                intersection_point = (horizontal_road.offset, vertical_road.offset)
+                intersection_point = (
+                    horizontal_road.offset, vertical_road.offset)
 
                 # add light signal one position before the intersection on both roads
                 vertical_road.add_light_signal(
                     LightSignal(
                         # vertical road --> need x position -1
                         position=intersection_point[0] - 1,
-                        state = 0
+                        state=0
                     )
                 )
 
@@ -293,15 +314,15 @@ class Model:
             # --> we have reversed indexes, e.g. [5, 2, 1]
             for remove_index in light_signal_remove_indexes:
                 del road.light_signals[remove_index]
-            
+
     def do_tick(self):
         # perform a full tick and update the model
         self.grid = self.empty_grid(self.size)
         self.border_grid = self.empty_border_grid(self.size)
 
         for road in self.roads:
-            road.do_tick() # execute road logic
-            self.render_road(road) # render road to the grid
+            road.do_tick()  # execute road logic
+            self.render_road(road)  # render road to the grid
 
     def update_generators_speed(self, min_speed, max_speed):
         # re-initiate generator in all roads with new min/max speeds
@@ -327,8 +348,9 @@ class Model:
         # assign the right values to the grid for this road
         for light_signal in road.light_signals:
             # calculate (x, y) based on road direction, offset and light signal position on the riad
-            x, y = (road.offset, light_signal.position) if road.direction == "vertical" else (light_signal.position, road.offset)
-            
+            x, y = (road.offset, light_signal.position) if road.direction == "vertical" else (
+                light_signal.position, road.offset)
+
             # red = 0 state, green = 1 state
             # in our color map, the colors are + 3 from our binary light signal state
             self.grid[x][y] = light_signal.state + 3
@@ -336,23 +358,24 @@ class Model:
 
         for position, car in enumerate(road.list):
             # calculate (x, y) like light signal
-            x, y = (road.offset, position) if road.direction == "vertical" else (position, road.offset)
+            x, y = (road.offset, position) if road.direction == "vertical" else (
+                position, road.offset)
             if car is not None:
-                self.grid[x][y] = 2 # digit code for blue
-            elif self.grid[x][y] == 0: # only set road if cell is not light signal and not car
-                self.grid[x][y] = 1 # digit code for empty road
+                self.grid[x][y] = 2  # digit code for blue
+            elif self.grid[x][y] == 0:  # only set road if cell is not light signal and not car
+                self.grid[x][y] = 1  # digit code for empty road
 
     def empty_grid(self, size):
         # create an empty grid
-        grid = [0] * size # 0 = white
+        grid = [0] * size  # 0 = white
         for x in range(size):
             grid[x] = [0] * size
 
         return grid
-    
+
     def empty_border_grid(self, size):
         # create an empty border grid
-        grid = [5] * size # 5 = lightgrey
+        grid = [5] * size  # 5 = lightgrey
         for x in range(size):
             grid[x] = [5] * size
 
