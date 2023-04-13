@@ -195,7 +195,7 @@ class CarGenerator:
 
 
 class LightSignal:
-    def __init__(self, position, red_duration=50, green_duration=30, red_delay=5, state=0):
+    def __init__(self, position, red_duration=60, green_duration=40, red_delay=5, state=0):
         if red_duration <= green_duration:
             raise Exception("red_duration must be greater than green_duration")
 
